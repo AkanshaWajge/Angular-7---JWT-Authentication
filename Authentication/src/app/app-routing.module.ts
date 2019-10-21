@@ -14,7 +14,7 @@ const routes: Routes = [
     { path: '**', redirectTo: '' }
 ];
 
-export const appRoutingModule = RouterModule.forRoot(routes);
+export const AppRoutingModule = RouterModule.forRoot(routes);
 
 /* 
 To control access to a route with the auth guard you add it to the canActivate array in the route's configuration.
