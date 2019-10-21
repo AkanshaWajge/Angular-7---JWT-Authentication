@@ -31,3 +31,10 @@ module.exports = {
         historyApiFallback: true
     }
 }
+
+/*
+Open webpack.config.js and add the below global config object using webpack.
+DefinePlugin, this will create a global config that is accessible from anywhere in the Angular application.
+
+The config object contains the apiUrl that will be used to make HTTP requests to the API. 
+*/
