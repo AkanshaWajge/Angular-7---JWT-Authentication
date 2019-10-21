@@ -10,6 +10,9 @@ import { RegisterComponent } from './register/register.component';
 // used to create fake backend
 import { fakeBackendProvider } from './_helpers';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,7 +22,9 @@ import { fakeBackendProvider } from './_helpers';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [
       // provider used to create fake backend
