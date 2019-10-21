@@ -1,9 +1,8 @@
 <!-- nav -->
-<nav class="navbar navbar-expand navbar-dark bg-dark">
+<nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
   <div class="navbar-nav">
       <a class="nav-item nav-link" routerLink="/">Home</a>
-      <a class="nav-item nav-link" routerLink="/login">Login</a>
-      <a class="nav-item nav-link" routerLink="/register">Register</a>
+      <a class="nav-item nav-link" (click)="logout()">Logout</a>
   </div>
 </nav>
 
@@ -17,3 +16,12 @@
       </div>
   </div>
 </div>
+
+<!-- 
+  The updated nav contains just two links - Home and Logout. The home link navigates to the home route ("/") using the 
+  routerLink attribute directive. The logout link calls the logout() method on click by using the (click)="logout()" 
+  event binding attribute.
+
+The *ngIf="currentUser" directive renders the nav if the currentUser property contains a value, which indicates that 
+the user is logged in.
+ -->
