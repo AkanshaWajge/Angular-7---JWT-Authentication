@@ -1,1 +1,57 @@
-<p>login works!</p>
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+<h2>Login</h2>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+            <div *ngIf="f.username.errors.required">Username is required</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors.required">Password is required</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Login
+        </button>
+        <a routerLink="/register" class="btn btn-link">Register</a>
+    </div>
+</form>
+
+<!-- The login component template contains the HTML and Angular template syntax for displaying the form in the browser 
+    and binding the form to the properties and methods in the login component above.
+
+The [formGroup]="loginForm" attribute directive binds the form to the loginForm property of the login component. 
+When the form is submitted in the browser the [formGroup] directive emits an ngSubmit event that triggers
+ the onSubmit() method of the login component. The (ngSubmit)="onSubmit()" event binding attribute binds 
+ the ngSubmit event to the onSubmit() method.
+
+Each form input has a formControlName attribute which syncs the form input with the FormControl of the same
+ name in the loginForm.
+
+The [ngClass]="{ 'is-invalid': submitted && f.username.errors }" attribute directive adds the is-invalid CSS
+ class to username input if the form has been submitted and the username is invalid (contains errors) based 
+ on the validation rules defined in the login component. The same [ngClass] directive is used on the password input. 
+ The is-invalid class is part of Bootstrap 4, it makes the border of the input red to indicate it is invalid.
+
+The div with CSS class invalid-feedback following each input is for displaying validation error messages, 
+the messages appear as red text which are styled by Bootstrap 4. The *ngIf="submitted && f.username.errors" 
+directive renders the username error messages if the form has been submitted and the username is invalid, 
+the same *ngIf directive is used for password input errors. Within the invalid-feedback div is a child div 
+for each specific error message, the *ngIf="f.username.errors.required" renders the message Username is
+ required if the username input is empty. The Validators.required validator is attached to the username 
+ control in the login component above and has a value of true if the input is empty.
+
+The login button is used to submit the form, the [disabled]="loading" attribute directive disables the button 
+when the loading property of the login component is true, a spinner is also displayed in the button while 
+loading with the use of the *ngIf="loading" directive. The spinner styling and animation is part of Bootstrap 4.
+
+Lastly the register link uses the routerLink="/register" directive to link to the /register route. 
+The routerLink directive uses Angular to navigate between routes using partial page updates. 
+Don't use the standard HTML href attribute because it results in a full application reload each time you click a link. -->
