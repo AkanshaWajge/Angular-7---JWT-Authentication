@@ -79,6 +79,15 @@ export const fakeBackendProvider = {
     multi: true
 };
 
+ /* 
+    Angular providers tell the Angular Dependency Injection (DI) system how to get a value for a dependency.
+     The fakeBackendProvider hooks into the HTTP request pipeline by using the Angular built in injection 
+     token HTTP_INTERCEPTORS, Angular has several built in injection tokens that enable you to hook into different 
+     parts of the framework and application lifecycle events. The multi: true option in the fakeBackendProvider tells 
+     Angular to add the provider to the collection of HTTP_INTERCEPTORS rather than replace the collection with this 
+     single provider,this allows you to add multiple HTTP interceptors to the request pipeline for handling different tasks
+    */
+
 /* 
 To simulate the behaviour of a real api with a database, the users array will be saved in browser local storage and initialised from 
 local storage when the app starts, so registered users will persist when the browser is refreshed or closed. The default hardcoded user 
