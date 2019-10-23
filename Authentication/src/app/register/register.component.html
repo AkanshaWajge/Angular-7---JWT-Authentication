@@ -1,1 +1,32 @@
-<p>register works!</p>
+<!-- 
+    The register component template contains the HTML and Angular template syntax for displaying the form in the browser 
+    and binding the form to the properties and methods in the register component above.
+
+The [formGroup]="registerForm" attribute directive binds the form to the registerForm property of the register component.
+ When the form is submitted in the browser the [formGroup] directive emits an ngSubmit event that triggers the onSubmit()
+  method of the register component. The (ngSubmit)="onSubmit()" event binding attribute binds the ngSubmit event to the 
+  onSubmit() method.
+
+Each form input has a formControlName attribute which syncs the form input with the FormControl of the same name in the registerForm.
+
+The [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" attribute directive adds the is-invalid CSS class to 
+firstName input if the form has been submitted and the firstName is invalid (contains errors) based on the validation 
+rules defined in the register component. The same [ngClass] directive is used on all of the inputs. The is-invalid class
+ is part of Bootstrap 4, it makes the border of the input red to indicate it is invalid.
+
+The div with CSS class invalid-feedback following each input is for displaying validation error messages, the messages
+ appear as red text which are styled by Bootstrap 4. The *ngIf="submitted && f.firstName.errors" directive renders the 
+ firstName validation messages if the form has been submitted and the firstName is invalid, the same *ngIf directive is
+  used for all input validation errors. Within the invalid-feedback div is a child div for each specific error message, 
+  the *ngIf="f.firstName.errors.required" renders the message First Name is required if the firstName input is empty. 
+  The Validators.required validator is attached to the firstName control in the register component above and has a value 
+  of true if the input is empty.
+
+The register button is used to submit the form, the [disabled]="loading" attribute directive disables the button when the 
+loading property of the register component is true, a spinner is also displayed in the button while loading with the use 
+of the *ngIf="loading" directive. The spinner styling and animation is part of Bootstrap 4.
+
+Lastly the cancel link uses the routerLink="/login" directive to link back to the /login route. The routerLink directive 
+uses Angular to navigate between routes using partial page updates. Don't use the standard HTML href attribute because 
+it results in a full application reload each time you click a link.
+ -->
