@@ -1,1 +1,24 @@
-<p>home works!</p>
+<h1>Hi {{currentUser.firstName}}!</h1>
+<p>You're logged in with Angular 7!!</p>
+<h3>All registered users:</h3>
+<ul>
+    <li *ngFor="let user of users">
+        {{user.username}} ({{user.firstName}} {{user.lastName}})
+        - <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
+    </li>
+</ul>
+
+<!-- 
+    The home component template contains the HTML and Angular template syntax for displaying a welcome message with the 
+    current user name, a list of all users, and enables users to be deleted.
+
+The {{currentUser.firstName}} uses Angular interpolation ({{...}}) to display the first name property of the currentUser 
+object from the home component above. 
+
+The *ngFor="let user of users" directive renders an <li> for each user containing the user details and a link enabling the 
+    
+    user to be deleted. The (click)="deleteUser(user.id)" event binding attribute binds the 
+    click event to the deleteUser() method in the home component.
+
+
+ -->
