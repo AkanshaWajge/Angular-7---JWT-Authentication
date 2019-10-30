@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpInterceptor, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
-//let users = [{ id: 1, firstName: 'Jason', lastName: 'Watmore', username: 'test', password: 'test' }];
 
 // array in local storage for registered users
 let users = JSON.parse(localStorage.getItem('users')) || [];
@@ -25,6 +24,10 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     return authenticate();
                 case url.endsWith('/users/register') && method === 'POST':
                     return register();
+                case url.endsWith('/users') && method === 'GET':
+                    return getUsers();
+                case url.match(/\/users\/\d+$/) && method === 'DELETE':
+                    return deleteUser();
                 default:
                     // pass through any requests not handled above
                     return next.handle(request);
@@ -59,7 +62,20 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             return ok();
         }
-        
+
+        function getUsers() {
+            if (!isLoggedIn()) return unauthorized();
+            return ok(users);
+        }
+
+        function deleteUser() {
+            if (!isLoggedIn()) return unauthorized();
+
+            users = users.filter(x => x.id !== idFromUrl());
+            localStorage.setItem('users', JSON.stringify(users));
+            return ok();
+        }
+
         // helper functions
 
         function ok(body?) {
@@ -68,6 +84,19 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         function error(message) {
             return throwError({ error: { message } });
+        }
+
+        function unauthorized() {
+            return throwError({ status: 401, error: { message: 'Unauthorised' } });
+        }
+
+        function isLoggedIn() {
+            return headers.get('Authorization') === 'Bearer fake-jwt-token';
+        }
+
+        function idFromUrl() {
+            const urlParts = url.split('/');
+            return parseInt(urlParts[urlParts.length - 1]);
         }
     }
 }
@@ -89,16 +118,53 @@ export const fakeBackendProvider = {
     */
 
 /* 
-To simulate the behaviour of a real api with a database, the users array will be saved in browser local storage and initialised from 
-local storage when the app starts, so registered users will persist when the browser is refreshed or closed. The default hardcoded user 
+To simulate the behaviour of a real api with a database, the users array will be saved in browser local
+ storage and initialised from 
+local storage when the app starts, so registered users will persist when the browser is refreshed or closed. 
+The default hardcoded user 
 has been removed because the user will now register before logging in to the application.
 
-The register route (/users/register) has been added to the handleRoute() function, requests to the register route are handled by the new 
+The register route (/users/register) has been added to the handleRoute() function, requests to the register 
+route are handled by the new 
 register() function.
 
 The register() function: 
 - checks if the username is already taken and returns an error if it is.
-- calculates the next user.id by adding 1 to the current highest user id (Math.max(...users.map(x => x.id)) + 1) or defaults to 1 for the first user.
+- calculates the next user.id by adding 1 to the current highest user id (Math.max(...users.map(x => x.id)) + 1) 
+or defaults to 1 for the first user.
 - pushes the new user to the users array and saves the updated array in local storage.
 - returns an empty ok response to indicate that registration was successful.
+
+*/
+
+/*
+The secure get users route (/users) has been added to the handleRoute() function to enable fetching all users, 
+requests to the get users route are handled 
+by the new getUsers() function.
+
+The getUsers() function:
+
+checks if the user is logged in by calling the new isLoggedIn() helper function. If the user is not logged in a 
+401 Unauthorized response is returned by calling the new unauthorized() helper function.
+returns an ok() response with the whole users array in the response body.
+The secure delete user route (/users/{id}) has been added to the handleRoute() function to enable deleting a user, 
+requests to the delete user route are handled by the new deleteUser() function. The route uses the regular expression 
+/\/users\/\d+$/ to matches urls that end with /users/ followed by any number for the user id.
+
+The deleteUser() function:
+
+checks if the user is logged in by calling the new isLoggedIn() helper function. If the user is not logged in a 401 
+Unauthorized response is returned by calling the new unauthorized() helper function.
+filters the users array to remove the user with the id from the request url. The id from the url is returned from the 
+new idFromUrl() helper function.
+saves the updated users array to browser local storage.
+returns an ok() response.
+A few new helper functions have been added that are used by the new routes: unauthorized(), isLoggedIn() and idFromUrl().
+
+The unauthorized() function returns a 401 Unauthorized response.
+
+The isLoggedIn() function checks if the HTTP Authorization header contains the correct token (fake-jwt-token).
+
+The idFromUrl() function splits the url into parts with url.split('/') and converts the last part (the user id) from a 
+string to an integer with parseInt(urlParts[urlParts.length - 1]).
 */
