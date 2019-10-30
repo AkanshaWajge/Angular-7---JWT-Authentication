@@ -1,0 +1,11 @@
+<!-- 
+    The alert component template displays an alert message when there is one available.
+
+The *ngIf="message" directive renders the alert message if the message is not null / undefined.
+
+The [ngClass]="message.cssClass" attribute directive binds the element class attribute to the 
+cssClass property of the message set in the alert component above.
+
+The {{message.text}} uses Angular interpolation ({{...}}) to render the message text in the alert div.
+ -->
+<div *ngIf="message" [ngClass]="message.cssClass">{{message.text}}</div>
