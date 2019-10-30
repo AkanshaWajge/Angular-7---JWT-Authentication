@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
-import { AuthenticationService } from '../_services'
+import { AuthenticationService, AlertService } from '../_services'
 
 @Component({templateUrl: 'login.component.html'})
 export class LoginComponent implements OnInit {
@@ -11,13 +11,13 @@ export class LoginComponent implements OnInit {
     loading = false;
     submitted = false;
     returnUrl: string;
-    error: string;
 
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private alertService: AlertService
     ) {
         // redirect to home if already logged in
         if (this.authenticationService.currentUserValue) { 
@@ -41,6 +41,9 @@ export class LoginComponent implements OnInit {
     onSubmit() {
         this.submitted = true;
 
+        // reset alerts on submit
+        this.alertService.clear();
+        
         // stop here if form is invalid
         if (this.loginForm.invalid) {
             return;
@@ -54,7 +57,7 @@ export class LoginComponent implements OnInit {
                     this.router.navigate([this.returnUrl]);
                 },
                 error => {
-                    this.error = error;
+                    this.alertService.error(error);
                     this.loading = false;
                 });
     }
@@ -95,4 +98,25 @@ as parameters. The authentication service returns an Observable that we .subscri
   On fail the error message is stored in the this.error property to be displayed by the template and the this.loading 
   property is reset back to false.
 The call to .pipe(first()) unsubscribes from the observable immediately after the first value is emitted. 
+*/
+
+
+/*
+Refactor Login Component to use Alert Service
+Now that we have a global alert service we can refactor the login component to use the alert service and 
+remove the local error and success alert properties.
+
+Refactor Login Component Logic
+Open the login.component.ts file and:
+
+add the AlertService to the service imports on line 6 to make it available to the component.
+remove the local error: string and success: string properties as these are no longer needed.
+add the private alertService: AlertService parameter to the constructor() method so it is injected by the 
+Angular DI system.
+remove the logic that sets the success message below the comment // show success message on registration, 
+the register component will be refactored in the next step to set the 'Registration successful' message with 
+the alert service.
+replace the two lines below the comment // reset alerts on submit in the onSubmit() method with a call to 
+this.alertService.clear();.
+replace the statement this.error = error; with this.alertService.error(error); in the onSubmit() method.
 */
