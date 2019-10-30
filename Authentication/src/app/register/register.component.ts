@@ -3,20 +3,20 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
-import { UserService, AuthenticationService } from '../_services';
+import { UserService, AuthenticationService, AlertService } from '../_services';
 
 @Component({ templateUrl: 'register.component.html' })
 export class RegisterComponent implements OnInit {
     registerForm: FormGroup;
     loading = false;
     submitted = false;
-    error: string;
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
-        private userService: UserService
+        private userService: UserService,
+        private alertService: AlertService
     ) {
         // redirect to home if already logged in
         if (this.authenticationService.currentUserValue) {
@@ -39,6 +39,9 @@ export class RegisterComponent implements OnInit {
     onSubmit() {
         this.submitted = true;
 
+        // reset alerts on submit
+        this.alertService.clear();
+
         // stop here if form is invalid
         if (this.registerForm.invalid) {
             return;
@@ -49,10 +52,11 @@ export class RegisterComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
+                    this.alertService.success('Registration successful', true);
                     this.router.navigate(['/login'], { queryParams: { registered: true }});
                 },
                 error => {
-                    this.error = error;
+                    this.alertService.error(error);
                     this.loading = false;
                 });
     }
@@ -78,4 +82,22 @@ checks if the form is valid by checking this.registerForm.invalid and prevents s
 sets the this.loading property to true before submitting the registration details via the user service, this property is used in the register component template to display a loading spinner and disable the register button.
 registers the user by calling the this.userService.register() method and passing it the form data (this.registerForm.value). The user service returns an Observable that we .subscribe() to for the results of the registration. On success the user is redirected to the /login route by calling this.router.navigate(), passing registered=true as a query parameter so the login page can display a success message. On fail the error message is assigned to the this.error property to be displayed by the template and the this.loading property is reset back to false.
 The call to .pipe(first()) unsubscribes from the observable immediately after the first value is emitted.
+*/
+
+/*
+we can refactor the register component to use the alert service and remove the local error alert property.
+
+Refactor Register Component Logic
+Open the register.component.ts file and:
+
+add the AlertService to the service imports on line 6 to make it available to the component.
+remove the local error: string property as it is no longer needed.
+add the private alertService: AlertService parameter to the constructor() method 
+so it is injected by the Angular DI system.
+add the statement below the comment // reset alerts on submit in the onSubmit() method to 
+clear any alert messages that are displayed when the form is submitted (see lines 42-43).
+add a call to alertService.success() on line 55 to display a green success alert on successful registration. 
+The first parameter sets the message to 'Registration successful', the second parameter tells the alert service 
+to keep the message after a single route change so it will be displayed after redirecting the to login page.
+replace the statement this.error = error; with this.alertService.error(error); in the onSubmit() method.
 */
